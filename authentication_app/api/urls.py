@@ -1,12 +1,6 @@
 from django.urls import path
 from .views import (
     RegistrationView,
-    LoginView,
-    ActivateView,
-    LogoutAndBlacklistView,
-    CookieTokenRefreshView,
-    PasswordResetRequestView,
-    PasswordResetConfirmView,
 )
 
 # URL routing for authentication and account management.
