@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -32,7 +32,6 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-
 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
@@ -68,6 +67,55 @@ class LoginView(APIView):
             secure=secure,
             samesite=samesite,
             max_age=refresh_max_age,
+            path="/",
+        )
+        return res
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        res = Response(
+            {"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}, status=status.HTTP_200_OK)
+        res.delete_cookie("access_token", path="/")
+        res.delete_cookie("refresh_token", path="/")
+        return res
+
+
+class RefreshCookieView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        token = request.COOKIES.get("refresh_token")
+        if not token:
+            return Response({"detail": "refresh token not avialable"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            refresh = RefreshToken(token)
+        except TokenError:
+            return Response({"detail": "refresh token not valid or expired"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        access = refresh.access_token
+
+        access_max_age = int(access.lifetime.total_seconds())
+        secure = not settings.DEBUG
+        samesite = "None" if not settings.DEBUG else "Lax"
+
+        res = Response({
+            "detail": "Token refreshed",
+            "access": str(access)
+        },
+            status=status.HTTP_200_OK)
+        res.set_cookie(
+            key="access_token",
+            value=str(access),
+            httponly=True,
+            secure=secure,
+            samesite=samesite,
+            max_age=access_max_age,
             path="/",
         )
         return res
