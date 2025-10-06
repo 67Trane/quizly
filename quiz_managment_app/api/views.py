@@ -4,14 +4,13 @@ from rest_framework.response import Response
 
 
 class CreateQuizView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         user = request.user
 
         print("user ist :", user)
-        print("request ist: ", request)
-        print("request title ist: ", request.title)
+        print("request ist: ", request.data.get("url"))
 
         return Response({
             "id": user.id,
