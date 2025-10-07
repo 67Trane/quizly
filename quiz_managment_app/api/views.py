@@ -9,7 +9,7 @@ from rest_framework import viewsets
 
 
 class CreateQuizView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
@@ -48,5 +48,5 @@ class CreateQuizView(APIView):
 class QuizViewSet(viewsets.ModelViewSet):
     queryset = Quiz.objects.prefetch_related("questions").all()
     serializer_class = QuizSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     
