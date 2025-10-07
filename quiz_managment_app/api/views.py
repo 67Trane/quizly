@@ -5,6 +5,7 @@ from .functions import process_youtube_quiz
 from ..models import Quiz, Question
 from rest_framework import status
 from .serializers import QuizSerializer
+from rest_framework import viewsets
 
 
 class CreateQuizView(APIView):
@@ -44,10 +45,8 @@ class CreateQuizView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class QuizListView(APIView):
+class QuizViewSet(viewsets.ModelViewSet):
+    queryset = Quiz.objects.prefetch_related("questions").all()
+    serializer_class = QuizSerializer
     permission_classes = [AllowAny]
-
-    def get(self, request):
-        return Response({
-            "test": "test2323"
-        })
+    
