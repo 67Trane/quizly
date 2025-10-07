@@ -4,14 +4,30 @@ import yt_dlp
 import whisper
 import os
 from google import genai
+import re
 
 
-def download_and_extract_audio():
-    URL = 'https://www.youtube.com/watch?v=r2RvhnR6Gtw'
 
+def process_youtube_quiz(url):
+    audio_path = download_audio(url)
+    transcript = transcribe_audio(audio_path)
+    quiz_json = generate_quiz_from_transcript(transcript)
+    
+    match = re.search(r"```(?:json)?\s*(.*?)```", quiz_json, re.DOTALL)
+    if match:
+        json_str = match.group(1).strip()
+    else:
+        json_str = quiz_json.strip()
+
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError:
+        return None
+
+
+def download_audio(url):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     DOWNLOAD_DIR = os.path.join(BASE_DIR, "downloads")
-
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     outtmpl = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
 
@@ -32,8 +48,7 @@ def download_and_extract_audio():
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-
-        info = ydl.extract_info(URL, download=True)
+        info = ydl.extract_info(url, download=True)
 
         audio_path = ydl.prepare_filename(info)
         base, _ = os.path.splitext(audio_path)
@@ -43,18 +58,16 @@ def download_and_extract_audio():
             if os.path.exists(base + ext):
                 audio_path = base + ext
                 break
-
-        transcript = create_transcribe(audio_path)
-        create_questions_with_gemini(transcript)
+        return audio_path
 
 
-def create_transcribe(audio):
+def transcribe_audio(audio):
     model = whisper.load_model("turbo")
     result = model.transcribe(audio)
     return result["text"]
 
 
-def create_questions_with_gemini(transcript):
+def generate_quiz_from_transcript(transcript):
     # The client gets the API key from the environment variable `GEMINI_API_KEY`.
     client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
@@ -83,7 +96,4 @@ def create_questions_with_gemini(transcript):
         the transcript is:"{transcript}"
         """
     )
-    print(response.text)
-
-
-download_and_extract_audio()
+    return response.text
