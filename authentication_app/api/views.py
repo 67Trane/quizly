@@ -6,10 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.conf import settings
-from .serializers import (
-    RegisterSerializer,
-    LoginSerializer
-)
+from .serializers import RegisterSerializer, LoginSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -21,7 +18,9 @@ class RegistrationView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({"detail": "User created successfully!"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"detail": "User created successfully!"}, status=status.HTTP_201_CREATED
+        )
 
 
 class LoginView(APIView):
@@ -42,14 +41,17 @@ class LoginView(APIView):
         secure = not settings.DEBUG
         samesite = "None" if not settings.DEBUG else "Lax"
 
-        res = Response({
-            "detail": "Login successfully!",
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-            }
-        }, status=status.HTTP_200_OK)
+        res = Response(
+            {
+                "detail": "Login successfully!",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
         res.set_cookie(
             key="access_token",
@@ -77,7 +79,11 @@ class LogoutView(APIView):
 
     def post(self, request):
         res = Response(
-            {"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}, status=status.HTTP_200_OK)
+            {
+                "detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."
+            },
+            status=status.HTTP_200_OK,
+        )
         res.delete_cookie("access_token", path="/")
         res.delete_cookie("refresh_token", path="/")
         return res
@@ -90,13 +96,17 @@ class RefreshCookieView(APIView):
     def post(self, request):
         token = request.COOKIES.get("refresh_token")
         if not token:
-            return Response({"detail": "refresh token not avialable"},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "refresh token not avialable"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
             refresh = RefreshToken(token)
         except TokenError:
-            return Response({"detail": "refresh token not valid or expired"},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "refresh token not valid or expired"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         access = refresh.access_token
 
@@ -104,11 +114,10 @@ class RefreshCookieView(APIView):
         secure = not settings.DEBUG
         samesite = "None" if not settings.DEBUG else "Lax"
 
-        res = Response({
-            "detail": "Token refreshed",
-            "access": str(access)
-        },
-            status=status.HTTP_200_OK)
+        res = Response(
+            {"detail": "Token refreshed", "access": str(access)},
+            status=status.HTTP_200_OK,
+        )
         res.set_cookie(
             key="access_token",
             value=str(access),

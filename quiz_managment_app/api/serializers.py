@@ -5,8 +5,14 @@ from ..models import Quiz, Question
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ["id", "question_title", "question_options",
-                  "answer", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "question_title",
+            "question_options",
+            "answer",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class QuizSerializer(serializers.ModelSerializer):
@@ -14,5 +20,12 @@ class QuizSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = ["id", "title", "description", "video_url",
-                  "created_at", "updated_at", "questions"]
+        fields = [
+            "id",
+            "title",
+            "description",
+            "video_url",
+            "created_at",
+            "updated_at",
+            "questions",
+        ]

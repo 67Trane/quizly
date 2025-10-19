@@ -4,7 +4,6 @@ from .views import (
     LoginView,
     LogoutView,
     RefreshCookieView,
-
 )
 
 # URL routing for authentication and account management.

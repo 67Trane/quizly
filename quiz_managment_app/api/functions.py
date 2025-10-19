@@ -7,12 +7,11 @@ from google import genai
 import re
 
 
-
 def process_youtube_quiz(url):
     audio_path = download_audio(url)
     transcript = transcribe_audio(audio_path)
     quiz_json = generate_quiz_from_transcript(transcript)
-    
+
     match = re.search(r"```(?:json)?\s*(.*?)```", quiz_json, re.DOTALL)
     if match:
         json_str = match.group(1).strip()
@@ -72,7 +71,8 @@ def generate_quiz_from_transcript(transcript):
     client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
     response = client.models.generate_content(
-        model="gemini-2.5-flash", contents=f"""
+        model="gemini-2.5-flash",
+        contents=f"""
         Based on the following transcript, generate a quiz in valid JSON format.
         The quiz must follow this exact structure:
         {{
@@ -94,6 +94,6 @@ def generate_quiz_from_transcript(transcript):
         - The output must be valid JSON and parsable as-is (e.g., using Python's json.loads).
         - Do not include explanations, comments, or any text outside the JSON. 
         the transcript is:"{transcript}"
-        """
+        """,
     )
     return response.text
