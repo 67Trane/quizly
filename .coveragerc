@@ -1,0 +1,25 @@
+[run]
+branch = True
+# Nur diese Packages messen:
+source =
+    quiz_managment_app
+    authentication_app
+
+# Unerwünschtes rausfiltern:
+omit =
+    */migrations/*
+    */tests/*
+    */__init__.py
+    */admin.py
+    */apps.py
+    core/settings.py
+    core/asgi.py
+    core/wsgi.py
+    manage.py
+
+[report]
+# Häufige „No cover“-Zeilen ignorieren
+exclude_lines =
+    pragma: no cover
+    if __name__ == "__main__":
+    raise NotImplementedError
