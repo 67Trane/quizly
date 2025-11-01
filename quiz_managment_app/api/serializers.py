@@ -3,6 +3,11 @@ from ..models import Quiz, Question
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Question model.
+    Handles conversion between Question instances and JSON representations.
+    """
+
     class Meta:
         model = Question
         fields = [
@@ -16,6 +21,11 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class QuizSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Quiz model.
+    Includes nested read-only QuestionSerializer to display related questions.
+    """
+
     questions = QuestionSerializer(many=True, read_only=True)
 
     class Meta:
