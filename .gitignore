@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Environments
+.env
+venv/
+.envrc
+env/
+env
+
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+
+# Migrations (optional, nur bei Bedarf ausschließen)
+# */migrations/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+# Audio file downloads
+quiz_managment_app/api/downloads/*
+
+# Coverage & pytest
+.coverage
+htmlcov/
+.cache/
+pytestdebug.log
+.pytest_cache

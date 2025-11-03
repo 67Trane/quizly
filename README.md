@@ -156,17 +156,10 @@ Create a `.env` file (or export variables in your environment):
 
 ```
 # Django
-SECRET_KEY=change-me
-DEBUG=True
-ALLOWED_HOSTS=127.0.0.1,localhost
 
 # Google Generative AI
 GEMINI_API_KEY=your_api_key
 
-# (Optional) Database
-DATABASE_URL=sqlite:///db.sqlite3
-# Example for Postgres:
-# DATABASE_URL=postgres://user:pass@localhost:5432/quizdb
 ```
 
 > `settings.py` should read `GEMINI_API_KEY` from environment variables (like in your code via `settings.GEMINI_API_KEY`).  
