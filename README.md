@@ -57,7 +57,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # 4) Create and configure environment file
-cp .env.example .env
+cp .env
 # Add your GEMINI_API_KEY and Django secrets
 
 # 5) Database setup
