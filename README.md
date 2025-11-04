@@ -43,7 +43,7 @@ ffmpeg -version
 
 ```bash
 # 1) Clone the repository
-git clone <your-repo-url> youtube-quiz-api
+git clone https://github.com/67Trane/quizly.git youtube-quiz-api
 cd youtube-quiz-api
 
 # 2) Virtual environment
