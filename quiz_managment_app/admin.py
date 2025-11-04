@@ -17,7 +17,6 @@ class QuestionInlineForm(forms.ModelForm):
         model = Question
         fields = ["question_title", "question_options", "answer"]
 
-        # Schöner JSON-Editor, wenn verfügbar
         if HAS_JSON_EDITOR:
             widgets = {
                 "question_options": AdminJSONEditor,
