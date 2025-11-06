@@ -28,11 +28,12 @@ The API is protected using **JWT (HTTP-Only Cookies)**.
 
 ### Install and Verify FFmpeg
 
-- macOS (brew): `brew install ffmpeg`  
-- Ubuntu/Debian: `sudo apt-get update && sudo apt-get install -y ffmpeg`  
+- macOS (brew): `brew install ffmpeg`
+- Ubuntu/Debian: `sudo apt-get update && sudo apt-get install -y ffmpeg`
 - Windows (choco): `choco install ffmpeg`
 
 Verify installation:
+
 ```bash
 ffmpeg -version
 ```
@@ -57,6 +58,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # 4) Create and configure environment file
+# macOS/Linux:
 cp .env
 # Add your GEMINI_API_KEY and Django secrets
 
@@ -74,25 +76,26 @@ python manage.py runserver
 
 This project uses JWTs stored in **HTTP-Only cookies**. Typical endpoints:
 
-- `POST /api/auth/register` – Register a new user  
-- `POST /api/auth/login` – Log in; sets `access` and `refresh` cookies  
-- `POST /api/auth/logout` – Clears cookies  
-- `POST /api/auth/refresh` – Refreshes the access token  
+- `POST /api/auth/register` – Register a new user
+- `POST /api/auth/login` – Log in; sets `access` and `refresh` cookies
+- `POST /api/auth/logout` – Clears cookies
+- `POST /api/auth/refresh` – Refreshes the access token
 
 > All protected endpoints require `IsAuthenticated`.  
 > For Postman/Insomnia, enable “Cookie Jar” to handle cookies automatically.
 
 ## 🧩 API Endpoints (Quiz)
 
-- `POST /api/quizzes/create` → Generates a quiz from a YouTube URL (**protected**)  
-- `GET /api/quizzes/` → List all quizzes (**protected**)  
-- `GET /api/quizzes/{id}/` → Retrieve a quiz and its questions (**protected**)  
+- `POST /api/quizzes/create` → Generates a quiz from a YouTube URL (**protected**)
+- `GET /api/quizzes/` → List all quizzes (**protected**)
+- `GET /api/quizzes/{id}/` → Retrieve a quiz and its questions (**protected**)
 
 > Exact routes may differ depending on your `urls.py`. The above are examples for your `CreateQuizView` and `QuizViewSet`.
 
 ### Example: Create a Quiz
 
 Request:
+
 ```http
 POST /api/quizzes/create
 Content-Type: application/json
@@ -104,6 +107,7 @@ Cookie: <your JWT cookies>
 ```
 
 Response (`201 Created`):
+
 ```json
 {
   "id": 1,
@@ -128,12 +132,12 @@ Response (`201 Created`):
 
 ## 🧠 How It Works (Pipeline)
 
-1. **Download**: `yt_dlp` downloads the best available audio stream.  
-2. **Postprocessing**: FFmpeg extracts/converts it (e.g., MP3, 64 kbit/s).  
-3. **Transcription**: `whisper.load_model("turbo")` transcribes the audio.  
-   - You can also use other models like `"base"`, `"small"`, `"medium"`.  
-4. **Quiz Generation**: Google Gemini (`gemini-2.5-flash`) generates a valid JSON with 10 questions.  
-5. **Persistence**: `Quiz` and `Question` objects are saved (`bulk_create` for efficiency).  
+1. **Download**: `yt_dlp` downloads the best available audio stream.
+2. **Postprocessing**: FFmpeg extracts/converts it (e.g., MP3, 64 kbit/s).
+3. **Transcription**: `whisper.load_model("turbo")` transcribes the audio.
+   - You can also use other models like `"base"`, `"small"`, `"medium"`.
+4. **Quiz Generation**: Google Gemini (`gemini-2.5-flash`) generates a valid JSON with 10 questions.
+5. **Persistence**: `Quiz` and `Question` objects are saved (`bulk_create` for efficiency).
 6. **Response**: The quiz is serialized with `QuizSerializer`.
 
 ## 🔧 Project Structure (simplified)
@@ -155,10 +159,16 @@ app/
 Create a `.env` file (or export variables in your environment):
 
 ```
-# Django
+# 🐍 Django Settings
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
 
-# Google Generative AI
-GEMINI_API_KEY=your_api_key
+# 🌐 CORS / CSRF Configuration
+CORS_ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200,http://localhost:5500,http://127.0.0.1:5500
+CSRF_TRUSTED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200,http://localhost:5500,http://127.0.0.1:5500
+
+# 🤖 Google Generative AI
+GEMINI_API_KEY=your-key
 
 ```
 
@@ -195,17 +205,17 @@ google-genai>=0.3.0
 
 ## 🔒 Security
 
-- Use **HTTP-Only, Secure cookies** for JWTs (HTTPS in production).  
-- Never commit your `SECRET_KEY`.  
-- Keep your Gemini API key in environment variables.  
+- Use **HTTP-Only, Secure cookies** for JWTs (HTTPS in production).
+- Never commit your `SECRET_KEY`.
+- Keep your Gemini API key in environment variables.
 - Protect upload/download directories from public access.
 
 ## 🗺️ Roadmap (Ideas)
 
-- Retry/backoff for network errors  
-- Real-time progress (WebSockets) for download/transcription  
-- Multilingual transcription support (Whisper config)  
-- Quiz scoring & leaderboard system  
+- Retry/backoff for network errors
+- Real-time progress (WebSockets) for download/transcription
+- Multilingual transcription support (Whisper config)
+- Quiz scoring & leaderboard system
 - Admin UI for editing generated questions
 
 ## 📄 License

@@ -29,24 +29,15 @@ SECRET_KEY = "django-insecure-s*f1sl4gmflii3$*tox&j^7tsn27mxcff184o^_b6gwzxjvy&+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "CORS_ALLOWED_ORIGINS", "http://localhost:4200,http://127.0.0.1:4200,http://localhost:5500,http://127.0.0.1:5500",).split(",")
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-]
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:4200,http://127.0.0.1:4200,http://localhost:5500,http://127.0.0.1:5500",).split(",")
 # Application definition
 
 INSTALLED_APPS = [
